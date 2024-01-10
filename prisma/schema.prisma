@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model DailyStat {
+  id        Int      @id @default(autoincrement())
+  user      String   @db.VarChar(255)
+  date      String   @db.VarChar(255)
+  timeSlot  Int
+  usageTime Int
+  success   Int
+  incentive Int
+  frame     Int
+  period    String   @db.VarChar(255)
+  updated   String   @db.VarChar(255)
+}
+
+model UsageStat {
+  id        Int      @id @default(autoincrement())
+  user      String   @db.VarChar(255)
+  date      String   @db.VarChar(255)
+  timeSlot  Int
+  appPackage String  @db.VarChar(255)
+  usageTime Int
+  frame     Int
+  period    String   @db.VarChar(255)
+  updated   String   @db.VarChar(255)
+}
+
+model UserInfo {
+  id        Int      @id @default(autoincrement())
+  user      String   @db.VarChar(255)
+  frame     Int
+  updated   String   @db.VarChar(255)
+}
