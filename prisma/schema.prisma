@@ -41,3 +41,11 @@ model UserInfo {
   frame     Int
   updated   String   @db.VarChar(255)
 }
+
+model updateTime {
+  id                   Int    @id @default(autoincrement())
+  userName             String @db.VarChar(255)
+  updateTime           String @db.VarChar(255)
+  usageStatsUpdateTime String @db.VarChar(255)
+  frame                Int
+}
