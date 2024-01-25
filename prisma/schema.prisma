@@ -36,10 +36,11 @@ model UsageStat {
 }
 
 model UserInfo {
-  id        Int      @id @default(autoincrement())
-  user      String   @db.VarChar(255)
-  frame     Int
-  updated   String   @db.VarChar(255)
+  id            Int      @id @default(autoincrement())
+  user          String   @db.VarChar(255)
+  frame         Int
+  updated       String   @db.VarChar(255)
+  userIncentive UserIncentive?
 }
 
 model updateTime {
@@ -48,4 +49,11 @@ model updateTime {
   updateTime           String @db.VarChar(255)
   usageStatsUpdateTime String @db.VarChar(255)
   frame                Int
+}
+
+model UserIncentive {
+  id             Int        @id @default(autoincrement())
+  userId         Int        @unique // UserInfo 모델의 id를 참조
+  userInfo       UserInfo   @relation(fields: [userId], references: [id])
+  incentiveFrame String     @db.VarChar(255)
 }

@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(bodyParser.json());
 
-// POST endpoint for inserting update time
+// POST endpoint for inserting update time => OK
 app.post('/goldentime/updatetime/insert', async (req, res) => {
     console.log('request from front api goldentime/updatetime/insert');
     const { UserName, UpdateTime, UsageStatsUpdateTime, Frame } = req.body.InsertUpdateTime[0];
@@ -75,7 +75,7 @@ app.post('/goldentime/usagestats', (req, res) => {
 app.post('/usage_data', async (req, res) => {
     // const { dataObj } = req.body;
     // console.log(dataObj);
-    if (req.body.UserInfo) {
+    if (req.body.UserInfo) { // => OK
         console.log('request from front api "UserInfo"');
 
         const { UserName, Frame } = req.body.UserInfo[0];
@@ -87,19 +87,29 @@ app.post('/usage_data', async (req, res) => {
                     updated: new Date().toISOString()
                 }
             });
-            res.status(200).json(userInfo);
+            
+            // UserInfo 생성 후, 해당 ID를 사용하여 UserIncentive 생성
+            const userIncentive = await prisma.userIncentive.create({
+                data: {
+                    userId: userInfo.id, // 새로 생성된 UserInfo의 ID
+                    incentiveFrame: "Constant" // 기본값 설정
+                }
+            });
+    
+            // 응답에 UserInfo 및 UserIncentive 데이터 포함
+            res.status(200).json({ id: userInfo.id });
         } catch (error) {
             console.error(error);
             res.status(500).send("Error processing UserInfo request");
         }
     } else if (req.body.UsageTimeDaily) {
         console.log('request from front api "UsageTimeDaily"');
-        const { UserName, Date, TimeSlot, UsageTime, Success, Incentive, Frame, Period } = req.body.UsageTimeDaily[0];
+        const { UserName, Date: getdate, TimeSlot, UsageTime, Success, Incentive, Frame, Period } = req.body.UsageTimeDaily[0];
         try {
             const dailyStatResult = await prisma.dailyStat.create({
                 data: {
                     user: UserName,
-                    date: Date,
+                    date: getdate,
                     timeSlot: TimeSlot,
                     usageTime: UsageTime,
                     success: Success,
@@ -116,17 +126,17 @@ app.post('/usage_data', async (req, res) => {
         }
     } else if (req.body.UsageStatsRawData) {
         console.log('request from front api "UsageStatsRawData"');
-        const { userName: userNameUsage, date: dateUsage, timeSlot: timeSlotUsage, appPackage, usageTime: usageTimeUsage, frame: frameUsage, period: periodUsage } = req.body.UsageStatsRawData[0];
+        const { UserName, Date: getdate, TimeSlot, AppPackage, UsageTime, Frame, Period } = req.body.UsageStatsRawData[0];
         try {
             const usageStatResult = await prisma.usageStat.create({
                 data: {
-                    user: userNameUsage,
-                    date: dateUsage,
-                    timeSlot: timeSlotUsage,
-                    appPackage: appPackage,
-                    usageTime: usageTimeUsage,
-                    frame: frameUsage,
-                    period: periodUsage,
+                    user: UserName,
+                    date: getdate,
+                    timeSlot: TimeSlot,
+                    appPackage: AppPackage,
+                    usageTime: UsageTime,
+                    frame: Frame,
+                    period: Period,
                     updated: new Date().toISOString()
                 }
             });
@@ -137,6 +147,33 @@ app.post('/usage_data', async (req, res) => {
         }
     } else {
         res.status(400).send("Invalid sendObjStr value");
+    }
+});
+
+// GET 요청으로 특정 사용자의 incentiveFrame 가져오기
+app.get('/goldentime/userincentive/:userId', async (req, res) => {
+    const userid = req.params.userId;
+
+    try {
+        const userIncentive = await prisma.userIncentive.findFirst({
+            where: {
+                userInfo: {
+                    userId: userid
+                }
+            },
+            select: {
+                incentiveFrame: true
+            }
+        });
+
+        if (userIncentive) {
+            res.status(200).json(userIncentive);
+        } else {
+            res.status(404).send('UserIncentive not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error processing request');
     }
 });
 
