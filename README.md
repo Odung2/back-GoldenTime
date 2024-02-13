@@ -110,17 +110,6 @@ incentiveFrame을 "Constant", "Random", "MAB" 셋 중 원하는 방식으로 작
 
 * Prisma를 통해 MySQL DB를 관리하고 있기 때문에, MySQL에 직접 접근해서 DB의 레코드나 schema를 수정하면 안 된다.
 
-#### Random Incentive
-
-```
-폰 사용 절제 미션을 성공하면 매 시간마다 200 ~ 800 사이의 임의의 Gold를 받습니다.
-```
-
-#### MAB Incentive
-
-```
-폰 사용 절제 미션을 성공하면 매 시간마다 Context 기반 200 ~ 800 사이의 Gold를 받습니다.
-```
 
 ## Deployment / 배포
 
