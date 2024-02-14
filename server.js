@@ -153,12 +153,14 @@ app.post('/usage_data', async (req, res) => {
 // GET 요청으로 특정 사용자의 incentiveFrame 가져오기
 app.get('/goldentime/userincentive/:userId', async (req, res) => {
     const userid = req.params.userId;
-
+    console.log('request from front api "chooseNewIncentive"');
     try {
         const userIncentive = await prisma.userIncentive.findFirst({
             where: {
                 userInfo: {
-                    userId: userid
+                    is: {
+                        id: parseInt(userid),
+                      }
                 }
             },
             select: {
