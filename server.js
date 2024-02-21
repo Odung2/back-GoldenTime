@@ -13,6 +13,8 @@ app.use(cors());
 // Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '100mb' }));
+
 // app.use(bodyParser.json());
 
 // POST endpoint for inserting update time => OK
@@ -147,6 +149,38 @@ app.post('/usage_data', async (req, res) => {
         }
     } else {
         res.status(400).send("Invalid sendObjStr value");
+    }
+});
+
+app.post('/usage_data/initial_usage_stats', async (req, res) => {
+    const initialUsageStats = req.body; // 클라이언트로부터 받은 JSON 배열
+    console.log('request from front api "initial_usage_stats"');
+    // 받은 데이터가 배열인지 확인
+    if (!Array.isArray(initialUsageStats)) {
+        return res.status(400).send("Data must be an array of usage stats.");
+    }
+
+    try {
+        // 받은 초기 사용 통계 데이터 배열을 반복하여 데이터베이스에 저장
+        for (const data of initialUsageStats) {
+            await prisma.usageStat.create({
+                data: {
+                    user: data.UserName,
+                    date: data.Date,
+                    timeSlot: data.TimeSlot,
+                    appPackage: data.AppPackage,
+                    usageTime: data.UsageTime,
+                    frame: data.Frame,
+                    period: data.Period,
+                    updated: data.Updated,
+                }
+            });
+        }
+        // 모든 데이터가 성공적으로 저장되면, 성공 메시지를 응답으로 보냄
+        res.status(200).send("Initial usage stats successfully saved.");
+    } catch (error) {
+        console.error("Error saving initial usage stats:", error);
+        res.status(500).send("Error processing initial usage stats request.");
     }
 });
 
