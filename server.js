@@ -15,8 +15,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: '100mb' }));
 
-// app.use(bodyParser.json());
-
 // POST endpoint for inserting update time => OK
 app.post('/goldentime/updatetime/insert', async (req, res) => {
     console.log('request from front api goldentime/updatetime/insert');
