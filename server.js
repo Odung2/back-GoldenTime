@@ -48,28 +48,6 @@ app.post('/goldentime/updatetime/insert', async (req, res) => {
     }
 });
 
-// POST endpoint for daily statistics
-app.post('/goldentime/dailystats', (req, res) => {
-    // Handle the logic for daily stats
-    console.log('request from front api goldentime/dailystats');
-    console.log(req.body);
-    res.status(200).send('Daily stats updated');
-});
-
-// POST endpoint for usage statistics
-app.post('/goldentime/usagestats', (req, res) => {
-    // Handle the logic for usage stats
-    console.log('request from front api usagestats');
-    console.log(req.body);
-    res.status(200).send('Usage stats updated');
-});
-
-// // Error handling middleware
-// app.use((err, req, res, next) => {
-//     console.error(err.stack);
-//     res.status(500).send('Something broke!');
-// });
-
 
 // ACTION_INITIAL_DATA_UPDATE 요청 처리
 app.post('/usage_data', async (req, res) => {
